@@ -68,7 +68,7 @@ begin
     return text1;
 end;
 $$;
-select * from splitting('')
+select splitting('hello,world');
 
 
 --2
