@@ -68,7 +68,7 @@ begin
     return text1;
 end;
 $$;
-select * from splitting('')
+select splitting('hello,world');
 
 
 --2
@@ -170,45 +170,39 @@ select * from foods;
 -- Functions can be called from Procedure whereas Procedures cannot be called from a Function.
 
 --4
-Create table employee(
-    id int primary key,
-    name varchar(120),
+create table employee(
+    id integer primary key ,
+    name varchar,
     date_of_birth date,
-    age int,
-    salary int,
-    workexperience int,
-    discount int);
-
-
-CREATE or replace procedure salary()
-language plpgsql
-    as
-$$
-    Begin
-        update employee
-        set salary = ( workexperience/2)*0.1*salary+salary,
-            discount = ( workexperience/2)*0.1*employee.discount + employee.discount,
-            discount = ( workexperience/5)*0.01 * employee.discount + employee.discount;
-        commit;
-    end;
-    $$;
-
-
--- b
-create or replace procedure sal()
-language plpgsql
-as
-    $$
-        BEGIN
-            update employee
-            set salary = salary*1.15
-            where age > 40;
-            update employee
-            set salary = salary*1.15*( workexperience/8);
-            update employee
-            set discount = 20 where  workexperience > 8;
-            commit;
-        end;
-    $$;
+    age integer,
+    salary integer,
+    workexperience integer,
+    discount integer
+);
+insert into employee values (1,'Christopher','12-05-1997',24,45000,1,6000);
+insert into employee values (2,'Nolan','10-04-1985',36,75000,3,7000);
+insert into employee values (3,'Woody','11-05-1967',54,100000,10,15000);
+insert into employee values (4,'Allen','01-06-1991',29,30000,4,4000);
+--a
+create or replace procedure increase()
+      as $$
+      begin
+          update employee set salary = salary*1.1 where workexperience>=2;
+          update employee set discount=discount*1.1 where workexperience>=2;
+          update employee set discount = discount*1.01 where workexperience>=5;
+      end; $$
+      language plpgsql;
+call increase();
+select * from employee;
+--b
+create or replace procedure increase2()
+      as $$
+      begin
+          update employee set salary = salary*1.15 where age>=40;
+          update employee set salary = salary*1.15 where workexperience>=8;
+          update employee set discount = discount*1.20  where workexperience>=8;
+      end; $$
+      language plpgsql;
+call increase2();
 
 
